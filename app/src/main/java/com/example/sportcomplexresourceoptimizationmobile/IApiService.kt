@@ -38,4 +38,12 @@ interface IApiService {
         @Query("pageNumber") pageNumber: Int,
         @Query("pageSize") pageSize: Int
     ): Call<EquipmentResponse>
+
+    @GET("reservations/slots/{equipmentId}/{startTime}/to/{endTime}/{duration}")
+    fun getReservationSlots(
+        @Path("equipmentId") equipmentId: String,
+        @Path("startTime") startTime: String,
+        @Path("endTime") endTime: String,
+        @Path("duration") duration: Int
+    ): Call<List<String>>
 }

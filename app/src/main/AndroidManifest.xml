@@ -31,6 +31,7 @@
         <activity android:name=".activities.SportComplexActivity" />
         <activity android:name=".activities.ServiceActivity" />
         <activity android:name=".activities.EquipmentActivity" />
+        <activity android:name=".activities.ReservationActivity" />
     </application>
 
 </manifest>

@@ -4,6 +4,8 @@ import com.example.sportcomplexresourceoptimizationmobile.models.LoginModel
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentCallback
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentServiceImpl
+import com.example.sportcomplexresourceoptimizationmobile.services.ReservationCallback
+import com.example.sportcomplexresourceoptimizationmobile.services.ReservationServiceImpl
 import com.example.sportcomplexresourceoptimizationmobile.services.ServiceCallback
 import com.example.sportcomplexresourceoptimizationmobile.services.ServiceServiceImpl
 import com.example.sportcomplexresourceoptimizationmobile.services.SportComplexService
@@ -89,5 +91,17 @@ class ApiServiceImpl {
         val call = apiService.getEquipmentsForService(serviceId, pageNumber, pageSize)
 
         call.enqueue(EquipmentServiceImpl(callback))
+    }
+
+    fun getAvailableSlots(
+        equipmentId: String,
+        startTime: String,
+        endTime: String,
+        duration: Int,
+        callback: ReservationCallback
+    ) {
+        val call = apiService.getReservationSlots(equipmentId, startTime, endTime, duration)
+        println(call)
+        call.enqueue(ReservationServiceImpl(callback))
     }
 }

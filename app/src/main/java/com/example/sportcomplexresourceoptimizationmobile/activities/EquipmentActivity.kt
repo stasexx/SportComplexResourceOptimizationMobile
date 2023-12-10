@@ -1,5 +1,6 @@
 package com.example.sportcomplexresourceoptimizationmobile.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +23,11 @@ class EquipmentActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerViewEquipment)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        equipmentAdapter = EquipmentAdapter(emptyList())
+
+        equipmentAdapter = EquipmentAdapter(emptyList()) { equipmentId ->
+            openReservationActivity(equipmentId)
+        }
+
         recyclerView.adapter = equipmentAdapter
 
         fetchEquipments()
@@ -37,13 +42,22 @@ class EquipmentActivity : AppCompatActivity() {
             pageSize = 20,
             callback = object : EquipmentCallback {
                 override fun onSuccess(result: List<EquipmentItem>) {
-                    equipmentAdapter = EquipmentAdapter(result)
+                    equipmentAdapter = EquipmentAdapter(result) { equipmentId ->
+                        openReservationActivity(equipmentId)
+                    }
                     recyclerView.adapter = equipmentAdapter
                 }
 
                 override fun onError(errorMessage: String) {
+                    // Обробка помилки, якщо потрібно
                 }
             }
         )
+    }
+
+    private fun openReservationActivity(equipmentId: String) {
+        val intent = Intent(this, ReservationActivity::class.java)
+        intent.putExtra("EQUIPMENT_ID", equipmentId)
+        startActivity(intent)
     }
 }
