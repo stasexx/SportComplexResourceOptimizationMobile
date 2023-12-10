@@ -1,23 +1,24 @@
 package com.example.sportcomplexresourceoptimizationmobile
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import com.example.sportcomplexresourceoptimizationmobile.activities.HomeActivity
-import com.example.sportcomplexresourceoptimizationmobile.RegistryActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.sportcomplexresourceoptimizationmobile.activities.SportComplexActivity
+import com.example.sportcomplexresourceoptimizationmobile.models.LoginModel
+import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexItem
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var usernameEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var loginButton: Button
-    private lateinit var registerButton: Button // Додайте цей рядок
+    private lateinit var registerButton: Button
+    private lateinit var sharedPreferences: SharedPreferences // Додайте цей рядок
 
     private val apiService = ApiServiceImpl()
 
@@ -28,19 +29,31 @@ class LoginActivity : AppCompatActivity() {
         usernameEditText = findViewById(R.id.editTextUsername)
         passwordEditText = findViewById(R.id.editTextPassword)
         loginButton = findViewById(R.id.buttonLogin)
+        registerButton = findViewById(R.id.buttonRegister)
+
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE) // Додайте цей рядок
+
+        // Перевірте, чи вже є збережений email
+        val savedEmail = sharedPreferences.getString("email", "")
+        if (savedEmail?.isNotEmpty() == true) {
+            // Якщо є, встановіть його в поле для вводу
+            usernameEditText.setText(savedEmail)
+        }
 
         loginButton.setOnClickListener {
-            val username = usernameEditText.text.toString()
+            val email = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            // Викликати метод для відправки POST-запиту з логіном та паролем
-            apiService.loginUser(username, password, object : ApiServiceImpl.ApiCallback {
-
+            // Збережіть email у SharedPreferences при успішному логіні
+            apiService.loginUser(email, password, object : ApiServiceImpl.ApiCallback {
                 override fun onSuccess(result: String) {
-                    // Обробка успішної відповіді після логіну
                     println("УСПІШНО")
                     println(result)
-                    val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+
+                    // Збереження email у SharedPreferences
+                    sharedPreferences.edit().putString("email", email).apply()
+
+                    val intent = Intent(this@LoginActivity, SportComplexActivity::class.java)
                     startActivity(intent)
                     finish()
                 }
@@ -54,7 +67,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         registerButton.setOnClickListener {
-            // Обробник кліку для відкриття активності реєстрації
             val intent = Intent(this@LoginActivity, RegistryActivity::class.java)
             startActivity(intent)
         }

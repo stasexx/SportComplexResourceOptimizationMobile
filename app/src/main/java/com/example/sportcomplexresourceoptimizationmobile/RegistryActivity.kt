@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
+import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexItem
 
 class RegistryActivity : AppCompatActivity() {
 
@@ -27,6 +28,7 @@ class RegistryActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.editTextRegisterPassword)
         registerButton = findViewById(R.id.buttonRegister)
 
+        // Переставлено сюди
         registerButton.setOnClickListener {
             val registerModel = RegisterModel(
                 firstNameEditText.text.toString(),
