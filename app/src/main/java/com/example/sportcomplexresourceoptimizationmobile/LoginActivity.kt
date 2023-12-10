@@ -6,8 +6,8 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import com.example.sportcomplexresourceoptimizationmobile.R
 import com.example.sportcomplexresourceoptimizationmobile.activities.HomeActivity
+import com.example.sportcomplexresourceoptimizationmobile.RegistryActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,6 +17,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var usernameEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var loginButton: Button
+    private lateinit var registerButton: Button // Додайте цей рядок
+
     private val apiService = ApiServiceImpl()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +51,12 @@ class LoginActivity : AppCompatActivity() {
                     Snackbar.make(it, "Login failed. Please try again.", Snackbar.LENGTH_LONG).show()
                 }
             })
+        }
+
+        registerButton.setOnClickListener {
+            // Обробник кліку для відкриття активності реєстрації
+            val intent = Intent(this@LoginActivity, RegistryActivity::class.java)
+            startActivity(intent)
         }
     }
 }
