@@ -2,6 +2,7 @@ package com.example.sportcomplexresourceoptimizationmobile
 
 import com.example.sportcomplexresourceoptimizationmobile.models.LoginModel
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
+import com.example.sportcomplexresourceoptimizationmobile.models.ReservationRequest
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentCallback
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentServiceImpl
 import com.example.sportcomplexresourceoptimizationmobile.services.ReservationCallback
@@ -10,6 +11,8 @@ import com.example.sportcomplexresourceoptimizationmobile.services.ServiceCallba
 import com.example.sportcomplexresourceoptimizationmobile.services.ServiceServiceImpl
 import com.example.sportcomplexresourceoptimizationmobile.services.SportComplexService
 import com.example.sportcomplexresourceoptimizationmobile.services.SportComplexServiceImpl
+import com.example.sportcomplexresourceoptimizationmobile.services.UserCallback
+import com.example.sportcomplexresourceoptimizationmobile.services.UserServiceImpl
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -103,5 +106,27 @@ class ApiServiceImpl {
         val call = apiService.getReservationSlots(equipmentId, startTime, endTime, duration)
         println(call)
         call.enqueue(ReservationServiceImpl(callback))
+    }
+
+    fun getUserByEmail(email: String, callback: UserCallback) {
+        val call = apiService.getUserByEmail(email)
+        call.enqueue(UserServiceImpl(callback))
+    }
+
+    fun createReservation(reservationRequest: ReservationRequest, callback: ApiCallback) {
+        val call = apiService.createReservation(reservationRequest)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    callback.onSuccess("Reservation created successfully.")
+                } else {
+                    callback.onError("Error occurred during reservation creation.")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback.onError("Network error occurred during reservation creation.")
+            }
+        })
     }
 }

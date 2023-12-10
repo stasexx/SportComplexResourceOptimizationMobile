@@ -3,8 +3,10 @@ package com.example.sportcomplexresourceoptimizationmobile
 import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentResponse
 import com.example.sportcomplexresourceoptimizationmobile.models.LoginModel
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
+import com.example.sportcomplexresourceoptimizationmobile.models.ReservationRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.ServiceResponse
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexModel
+import com.example.sportcomplexresourceoptimizationmobile.models.UserModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,6 +15,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface IApiService {
+
+    @GET("users/get/{email}")
+    fun getUserByEmail(@Path("email") email: String): Call<UserModel>
+
     @POST("users/login")
     fun loginUser(@Body loginRequest: LoginRequest): Call<LoginModel>
 
@@ -46,4 +52,7 @@ interface IApiService {
         @Path("endTime") endTime: String,
         @Path("duration") duration: Int
     ): Call<List<String>>
+
+    @POST("reservations")
+    fun createReservation(@Body reservationRequest: ReservationRequest): Call<Void>
 }
