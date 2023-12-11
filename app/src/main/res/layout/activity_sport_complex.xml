@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:id="@+id/drawerLayout">
 
-    <!-- Основний контент -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -20,11 +19,20 @@
             android:onClick="openDrawer"
             android:contentDescription="Menu"/>
 
+        <Button
+            android:id="@+id/createSportComplexButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Sportcomplex"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_below="@id/menuButton"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewSportComplex"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/menuButton"
+            android:layout_below="@id/createSportComplexButton"
             android:padding="16dp"
             />
 

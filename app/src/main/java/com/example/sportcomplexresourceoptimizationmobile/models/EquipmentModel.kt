@@ -12,5 +12,6 @@ data class EquipmentResponse(
 
 data class EquipmentItem(
     val id: String,
-    val name: String
+    val name: String,
+    var status: Boolean
 )

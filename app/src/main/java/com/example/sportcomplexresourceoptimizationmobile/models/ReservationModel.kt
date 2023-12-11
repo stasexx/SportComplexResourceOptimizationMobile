@@ -7,3 +7,10 @@ data class ReservationRequest(
     val equipmentId: String,
     val userId: String
 )
+
+data class ReservationItem(
+    val startReservation: String,
+    val duration: Int,
+    val endReservation: String,
+    val equipmentName: String
+)

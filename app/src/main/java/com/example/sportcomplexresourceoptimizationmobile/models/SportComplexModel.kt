@@ -21,3 +21,12 @@ data class SportComplexItem(
     val rating: Double,
     val createdById: String
 )
+
+data class SportComplexRequest(
+    val name: String,
+    val email: String,
+    val city: String,
+    val address: String,
+    val description: String,
+    val operatingHours: String
+)

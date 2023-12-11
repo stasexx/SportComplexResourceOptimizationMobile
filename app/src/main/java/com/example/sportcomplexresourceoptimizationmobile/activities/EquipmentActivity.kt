@@ -10,6 +10,11 @@ import com.example.sportcomplexresourceoptimizationmobile.R
 import com.example.sportcomplexresourceoptimizationmobile.adapters.EquipmentAdapter
 import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentItem
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentCallback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 class EquipmentActivity : AppCompatActivity() {
 
@@ -24,9 +29,7 @@ class EquipmentActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerViewEquipment)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        equipmentAdapter = EquipmentAdapter(emptyList()) { equipmentId ->
-            openReservationActivity(equipmentId)
-        }
+        equipmentAdapter = EquipmentAdapter(emptyList(), ::openReservationActivity)
 
         recyclerView.adapter = equipmentAdapter
 
@@ -34,7 +37,6 @@ class EquipmentActivity : AppCompatActivity() {
     }
 
     private fun fetchEquipments() {
-        println("ПРИЙШЛО")
         val serviceId = intent.getStringExtra("SERVICE_ID") ?: ""
         apiService.getEquipmentsForSportComplex(
             serviceId = serviceId,
@@ -42,10 +44,8 @@ class EquipmentActivity : AppCompatActivity() {
             pageSize = 20,
             callback = object : EquipmentCallback {
                 override fun onSuccess(result: List<EquipmentItem>) {
-                    equipmentAdapter = EquipmentAdapter(result) { equipmentId ->
-                        openReservationActivity(equipmentId)
-                    }
-                    recyclerView.adapter = equipmentAdapter
+                    // Оновіть дані в адаптері з відомістю про статус
+                    updateEquipmentStatus(result)
                 }
 
                 override fun onError(errorMessage: String) {
@@ -54,6 +54,33 @@ class EquipmentActivity : AppCompatActivity() {
             }
         )
     }
+
+    private fun updateEquipmentStatus(equipmentList: List<EquipmentItem>) {
+        val updatedEquipmentList = mutableListOf<EquipmentItem>()
+
+        equipmentList.forEach { equipment ->
+            apiService.getEquipmentStatus(equipment.id, object : ApiServiceImpl.ApiCallback {
+                override fun onSuccess(result: String) {
+                    println("РЕЗУЛЬТ" + result)
+                    equipment.status = result.toBoolean()
+                    updatedEquipmentList.add(equipment)
+
+                    println("РЕЗУЛЬТ" + result + "ЗАЙЗ" + updatedEquipmentList.size + " = " + equipmentList.size)
+                    if (updatedEquipmentList.size == equipmentList.size) {
+                        // Використовуйте корутину для виклику оновлення адаптера на головному потоці
+                        GlobalScope.launch(Dispatchers.Main) {
+                            equipmentAdapter.updateData(updatedEquipmentList)
+                        }
+                    }
+                }
+
+                override fun onError(error: String) {
+                    // Обробка помилки, якщо потрібно
+                }
+            })
+        }
+    }
+
 
     private fun openReservationActivity(equipmentId: String) {
         val intent = Intent(this, ReservationActivity::class.java)

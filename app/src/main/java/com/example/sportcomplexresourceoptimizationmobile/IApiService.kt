@@ -3,9 +3,11 @@ package com.example.sportcomplexresourceoptimizationmobile
 import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentResponse
 import com.example.sportcomplexresourceoptimizationmobile.models.LoginModel
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
+import com.example.sportcomplexresourceoptimizationmobile.models.ReservationItem
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.ServiceResponse
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexModel
+import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.UserModel
 import retrofit2.Call
 import retrofit2.http.Body
@@ -31,6 +33,9 @@ interface IApiService {
         @Query("pageSize") pageSize: Int
     ): Call<SportComplexModel>
 
+    @POST("sportcomplexes/create/{ownerId}")
+    fun createSportComplex(@Path("ownerId") ownerId: String, @Body sportComplexRequest: SportComplexRequest): Call<SportComplexModel>
+
     @GET("services/visible/{sportComplexId}")
     fun getServicesForSportComplex(
         @Path("sportComplexId") sportComplexId: String,
@@ -55,4 +60,10 @@ interface IApiService {
 
     @POST("reservations")
     fun createReservation(@Body reservationRequest: ReservationRequest): Call<Void>
+
+    @GET("equipments/status/{equipmentId}")
+    fun getEquipmentStatus(@Path("equipmentId") equipmentId: String): Call<Boolean>
+
+    @GET("reservations/{userId}")
+    fun getUserReservations(@Path("userId") userId: String): Call<List<ReservationItem>>
 }

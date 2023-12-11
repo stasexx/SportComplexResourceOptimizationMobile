@@ -3,6 +3,8 @@ package com.example.sportcomplexresourceoptimizationmobile
 import com.example.sportcomplexresourceoptimizationmobile.models.LoginModel
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationRequest
+import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexModel
+import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexRequest
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentCallback
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentServiceImpl
 import com.example.sportcomplexresourceoptimizationmobile.services.ReservationCallback
@@ -12,6 +14,8 @@ import com.example.sportcomplexresourceoptimizationmobile.services.ServiceServic
 import com.example.sportcomplexresourceoptimizationmobile.services.SportComplexService
 import com.example.sportcomplexresourceoptimizationmobile.services.SportComplexServiceImpl
 import com.example.sportcomplexresourceoptimizationmobile.services.UserCallback
+import com.example.sportcomplexresourceoptimizationmobile.services.UserReservationCallback
+import com.example.sportcomplexresourceoptimizationmobile.services.UserReservationServiceImpl
 import com.example.sportcomplexresourceoptimizationmobile.services.UserServiceImpl
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -118,15 +122,63 @@ class ApiServiceImpl {
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    callback.onSuccess("Reservation created successfully.")
+                    println("Reservation created successfully.")
                 } else {
-                    callback.onError("Error occurred during reservation creation.")
+                    println("Error occurred during reservation creation.")
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                callback.onError("Network error occurred during reservation creation.")
+                println("Network error occurred during reservation creation.")
             }
         })
+    }
+
+    fun getEquipmentStatus(equipmentId: String, callback: ApiCallback) {
+        val call = apiService.getEquipmentStatus(equipmentId)
+        call.enqueue(object : Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                println(call)
+                if (response.isSuccessful) {
+                    println("УСПІШНО")
+                    val status = response.body() ?: false
+                    println(status)
+                    callback.onSuccess(status.toString())
+                } else {
+                    println("Error occurred during equipment status retrieval.")
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                println("Network error occurred during equipment status retrieval. Error: $t")
+            }
+        })
+    }
+
+    fun createSportComplex(ownerId: String, sportComplexRequest: SportComplexRequest, callback: ApiCallback) {
+        val call = apiService.createSportComplex(ownerId, sportComplexRequest)
+        call.enqueue(object : Callback<SportComplexModel> {
+            override fun onResponse(call: Call<SportComplexModel>, response: Response<SportComplexModel>) {
+                if (response.isSuccessful) {
+                    val sportComplex = response.body()
+                    if (sportComplex != null) {
+                        callback.onSuccess(sportComplex.toString())
+                    } else {
+                        callback.onError("Failed to create sport complex")
+                    }
+                } else {
+                    callback.onError("Failed to create sport complex")
+                }
+            }
+
+            override fun onFailure(call: Call<SportComplexModel>, t: Throwable) {
+                callback.onError(t.message ?: "Unknown error")
+            }
+        })
+    }
+
+    fun getUserReservations(userId: String, callback: UserReservationCallback) {
+        val call = apiService.getUserReservations(userId)
+        call.enqueue(UserReservationServiceImpl(callback))
     }
 }

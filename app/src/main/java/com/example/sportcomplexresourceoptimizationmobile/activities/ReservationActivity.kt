@@ -61,7 +61,7 @@ class ReservationActivity : AppCompatActivity() {
         intervalAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         intervalSpinner.adapter = intervalAdapter
 
-        val equipmentId = intent.getStringExtra("EQUIMENT_ID") ?: ""
+        val equipmentId = intent.getStringExtra("EQUIPMENT_ID") ?: ""
         // Обробник натискання кнопки завантаження інформації
         loadInfoButton.setOnClickListener {
             val duration = durationSpinner.selectedItem.toString().toInt()
@@ -78,7 +78,7 @@ class ReservationActivity : AppCompatActivity() {
             println(startTimeUTC)
             println(endTimeUTC)
 
-            apiService.getAvailableSlots("65550191df174c2e4c781bab", startTimeUTC, endTimeUTC, duration, object : ReservationCallback {
+            apiService.getAvailableSlots(equipmentId, startTimeUTC, endTimeUTC, duration, object : ReservationCallback {
                 override fun onSuccess(result: List<String>) {
                     val timeSlotAdapter = ArrayAdapter<String>(
                         this@ReservationActivity,
@@ -124,7 +124,7 @@ class ReservationActivity : AppCompatActivity() {
                             startReservation = startTimeUTC,
                             duration = duration,
                             endReservation = endTimeUTC,
-                            equipmentId = "65550191df174c2e4c781bab",
+                            equipmentId = equipmentId,
                             userId = userId
                         )
                         apiService.createReservation(reservationRequest, object :

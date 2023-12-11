@@ -1,36 +1,58 @@
 package com.example.sportcomplexresourceoptimizationmobile.adapters
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sportcomplexresourceoptimizationmobile.R
 import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentItem
 
 class EquipmentAdapter(
-    private val equipmentList: List<EquipmentItem>,
+    private var equipmentList: List<EquipmentItem>,
     private val onItemClick: (String) -> Unit
-) : RecyclerView.Adapter<EquipmentAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<EquipmentAdapter.EquipmentViewHolder>() {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nameTextView: TextView = itemView.findViewById(R.id.textViewEquipmentName)
-        val buttonCreateReservation: Button = itemView.findViewById(R.id.buttonCreateReservation)
+    // Оновлення списку обладнання
+    fun updateData(newEquipmentList: List<EquipmentItem>) {
+        equipmentList = newEquipmentList
+        notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_equipment, parent, false)
-        return ViewHolder(itemView)
+    inner class EquipmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val equipmentName: TextView = itemView.findViewById(R.id.textViewEquipmentName)
+        val statusTextView: TextView = itemView.findViewById(R.id.textViewStatus)
+        val createReservationButton: Button = itemView.findViewById(R.id.buttonCreateReservation)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EquipmentViewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_equipment, parent, false)
+        return EquipmentViewHolder(itemView)
+    }
+
+    override fun onBindViewHolder(holder: EquipmentViewHolder, position: Int) {
         val equipment = equipmentList[position]
-        holder.nameTextView.text = equipment.name
 
-        holder.buttonCreateReservation.setOnClickListener {
-            onItemClick.invoke(equipment.id) // Передаємо equipment_id при натисканні
+        holder.equipmentName.text = equipment.name
+        holder.statusTextView.text = if (!equipment.status) "Free" else "Busy"
+
+        // Встановлення фону в залежності від статусу
+        val statusDrawable = if (!equipment.status) R.drawable.bg_green_rounded else R.drawable.bg_red_rounded
+        holder.statusTextView.setBackgroundResource(statusDrawable)
+
+        // Зміна кольору тексту в залежності від статусу
+        val textColor = if (!equipment.status) R.color.black else R.color.white
+        holder.statusTextView.setTextColor(holder.itemView.resources.getColor(textColor))
+
+        // Додайте інші дані до віджетів, якщо потрібно
+
+        holder.createReservationButton.setOnClickListener {
+            onItemClick.invoke(equipment.id)
         }
     }
 
