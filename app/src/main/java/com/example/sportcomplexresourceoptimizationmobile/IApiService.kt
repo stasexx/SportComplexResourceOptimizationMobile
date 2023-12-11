@@ -6,13 +6,17 @@ import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationItem
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.ServiceResponse
+import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexItem
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexModel
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexRequest
+import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexUpdateRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.UserModel
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -32,6 +36,18 @@ interface IApiService {
         @Query("pageNumber") pageNumber: Int,
         @Query("pageSize") pageSize: Int
     ): Call<SportComplexModel>
+
+    @PUT("sportcomplexes/update")
+    fun updateSportComplex(
+        @Body updateRequest: SportComplexUpdateRequest
+    ): Call<Void>
+
+    @DELETE("sportcomplexes/delete/{id}")
+    fun deleteSportComplex(@Path("id") sportComplexId: String): Call<Void>
+
+    @GET("sportcomplexes/{id}")
+    fun getSportComplexDetails(@Path("id") sportComplexId: String): Call<SportComplexItem>
+
 
     @POST("sportcomplexes/create/{ownerId}")
     fun createSportComplex(@Path("ownerId") ownerId: String, @Body sportComplexRequest: SportComplexRequest): Call<SportComplexModel>

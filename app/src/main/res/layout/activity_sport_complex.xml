@@ -19,6 +19,24 @@
             android:onClick="openDrawer"
             android:contentDescription="Menu"/>
 
+        <TextView
+            android:id="@+id/sportComplexesHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sport Complexes"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_margin="16dp"
+            android:layout_below="@id/menuButton"/>
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/sportComplexesHeader"
+            android:hint="Search Sport Complex"
+            android:layout_margin="16dp"/>
+
         <Button
             android:id="@+id/createSportComplexButton"
             android:layout_width="wrap_content"
@@ -26,7 +44,7 @@
             android:text="Create Sportcomplex"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="16dp"
-            android:layout_below="@id/menuButton"/>
+            android:layout_below="@id/searchEditText"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewSportComplex"

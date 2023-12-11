@@ -3,11 +3,14 @@ package com.example.sportcomplexresourceoptimizationmobile.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -24,6 +27,7 @@ import com.example.sportcomplexresourceoptimizationmobile.services.UserCallback
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.util.Locale
 
 class SportComplexActivity : AppCompatActivity() {
 
@@ -32,14 +36,31 @@ class SportComplexActivity : AppCompatActivity() {
     private val apiService = ApiServiceImpl()
     private val gson = Gson()
     private var isAdmin = false
+    private lateinit var sportComplexList: List<SportComplexItem>
+
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sport_complex)
         recyclerView = findViewById(R.id.recyclerViewSportComplex)
         recyclerView.layoutManager = LinearLayoutManager(this)
         val navigationView: NavigationView = findViewById(R.id.navigationView)
+        val searchEditText: EditText = findViewById(R.id.searchEditText)
+
+        // Додайте обробник для введення тексту пошуку
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Не використовується
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // Не використовується
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Оновіть список спорткомплексів згідно зі строкою пошуку
+                filterSportComplexes(s.toString())
+            }
+        })
 
         val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val userEmail = sharedPreferences.getString("email", null)
@@ -97,15 +118,30 @@ class SportComplexActivity : AppCompatActivity() {
                 R.id.menu_item2 -> {
                     true
                 }
-                R.id.createReservationButton -> {
-                    println("СТВОРЕННЯ")
-                    val intent = Intent(this, CreateSportComplexActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
                 else -> false
             }
         }
+    }
+
+    private fun deleteSportComplex(sportComplexId: String) {
+        apiService.deleteSportComplex(sportComplexId, object : ApiServiceImpl.ApiCallback {
+            override fun onSuccess(result: String) {
+                // Видалення успішне, оновіть список спорткомплексів
+                fetchSportComplexes()
+            }
+
+            override fun onError(error: String) {
+                // Обробте помилку видалення, якщо потрібно
+            }
+        })
+    }
+
+    private fun filterSportComplexes(query: String) {
+        val filteredList = sportComplexList.filter { sportComplex ->
+            sportComplex.name.toLowerCase(Locale.getDefault()).contains(query.toLowerCase(Locale.getDefault()))
+        }
+
+        sportComplexAdapter.updateData(filteredList)
     }
 
 
@@ -115,16 +151,10 @@ class SportComplexActivity : AppCompatActivity() {
             override fun onSuccess(result: List<SportComplexItem>) {
                 println("ПРИЙШЛО")
                 println(result)
-                val sportComplexList = parseSportComplexList(result)
+                sportComplexList = parseSportComplexList(result)
 
                 // Оновіть адаптер і встановіть його в RecyclerView
-                sportComplexAdapter = SportComplexAdapter(sportComplexList,
-                    { sportComplexId -> openServiceActivity(sportComplexId) },
-                    { sportComplexId -> deleteSportComplex(sportComplexId) },
-                    { sportComplexId -> updateSportComplex(sportComplexId) },
-                    isAdmin
-                )
-                recyclerView.adapter = sportComplexAdapter
+                sportComplexAdapter.updateData(sportComplexList)
 
                 // Поновлення меню
                 invalidateOptionsMenu()
@@ -136,12 +166,10 @@ class SportComplexActivity : AppCompatActivity() {
         })
     }
 
-    private fun deleteSportComplex(sportComplexId: String) {
-        // Логіка видалення спорткомплексу
-    }
-
     private fun updateSportComplex(sportComplexId: String) {
-        // Логіка оновлення спорткомплексу
+        val intent = Intent(this, CreateSportComplexActivity::class.java)
+        intent.putExtra("SPORT_COMPLEX_ID", sportComplexId)
+        startActivity(intent)
     }
 
     private fun openServiceActivity(sportComplexId: String) {

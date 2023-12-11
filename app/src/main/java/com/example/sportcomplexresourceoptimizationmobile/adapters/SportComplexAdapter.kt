@@ -52,6 +52,7 @@ class SportComplexAdapter(
             holder.buttonUpdate.setOnClickListener {
                 onUpdateClick.invoke(sportComplex.id)
             }
+
         } else {
             // Якщо користувач не є Admin, то приховати кнопки
             holder.buttonDelete.visibility = View.GONE

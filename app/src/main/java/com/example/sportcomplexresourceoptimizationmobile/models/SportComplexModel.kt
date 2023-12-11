@@ -30,3 +30,14 @@ data class SportComplexRequest(
     val description: String,
     val operatingHours: String
 )
+
+data class SportComplexUpdateRequest(
+    val id: String,
+    val name: String,
+    val email: String,
+    val city: String,
+    val address: String,
+    val description: String,
+    val operatingHours: String,
+    val rating: Double
+)
