@@ -1,17 +1,22 @@
 package com.example.sportcomplexresourceoptimizationmobile
 
+import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentResponse
+import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentUpdateRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.LoginModel
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationItem
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationRequest
+import com.example.sportcomplexresourceoptimizationmobile.models.ServiceRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.ServiceResponse
+import com.example.sportcomplexresourceoptimizationmobile.models.ServiceUpdateRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexItem
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexModel
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexUpdateRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.UserModel
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -59,12 +64,34 @@ interface IApiService {
         @Query("pageSize") pageSize: Int
     ): Call<ServiceResponse>
 
+    @POST("services")
+    fun createService(
+        @Query("userId") userId: String,
+        @Body serviceRequest: ServiceRequest
+    ): Call<Void>
+
+    @PUT("services")
+    fun updateService(@Body updateRequest: ServiceUpdateRequest): Call<Void>
+
+    @DELETE("services")
+    fun deleteService(@Query("serviceId") serviceId: String): Call<Void>
+
     @GET("equipments/visible/{serviceId}")
     fun getEquipmentsForService(
         @Path("serviceId") serviceId: String,
         @Query("pageNumber") pageNumber: Int,
         @Query("pageSize") pageSize: Int
     ): Call<EquipmentResponse>
+
+    @POST("equipments/create/{serviceId}/{userId}")
+    fun createEquipment(
+        @Path("serviceId") serviceId: String,
+        @Path("userId") userId: String,
+        @Body equipmentRequest: EquipmentRequest
+    ): Call<Void>
+
+    @PUT("equipments/update")
+    fun updateEquipment(@Body updateRequest: EquipmentUpdateRequest): Call<Void>
 
     @GET("reservations/slots/{equipmentId}/{startTime}/to/{endTime}/{duration}")
     fun getReservationSlots(
@@ -82,4 +109,7 @@ interface IApiService {
 
     @GET("reservations/{userId}")
     fun getUserReservations(@Path("userId") userId: String): Call<List<ReservationItem>>
+
+    @DELETE("equipments/delete/{equipmentId}")
+    fun deleteEquipment(@Path("equipmentId") equipmentId: String): Call<Void>
 }

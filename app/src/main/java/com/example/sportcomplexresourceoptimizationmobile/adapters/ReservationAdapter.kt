@@ -8,12 +8,27 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sportcomplexresourceoptimizationmobile.R
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationItem
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 class UserReservationAdapter(private var reservationList: List<ReservationItem>) :
     RecyclerView.Adapter<UserReservationAdapter.ReservationViewHolder>() {
 
     fun updateData(newReservationList: List<ReservationItem>) {
-        reservationList = newReservationList
+        // Сортування нового списку за спаданням дати кінця резервації
+        val sortedList = newReservationList.sortedByDescending { it.endReservation }
+
+        reservationList = sortedList
+        notifyDataSetChanged()
+    }
+
+    private var is24HourFormat: Boolean = true
+
+    // Додайте цей метод для зміни формату часу
+    fun toggleTimeFormat() {
+        is24HourFormat = !is24HourFormat
         notifyDataSetChanged()
     }
 
@@ -33,11 +48,44 @@ class UserReservationAdapter(private var reservationList: List<ReservationItem>)
         val reservation = reservationList[position]
 
         holder.serviceName.text = reservation.equipmentName
-        holder.startTime.text = "Start: ${reservation.startReservation}"
-        holder.endTime.text = "End: ${reservation.endReservation}"
+
+        // Конвертація часу з UTC в місцевий час
+        val startTime = convertUtcToLocalTime(reservation.startReservation)
+        val endTime = convertUtcToLocalTime(reservation.endReservation)
+
+        holder.startTime.text = "Start: ${formatTime(startTime)}"
+        holder.endTime.text = "End: ${formatTime(endTime)}"
     }
 
     override fun getItemCount(): Int {
         return reservationList.size
+    }
+
+    private fun formatTime(time: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = if (is24HourFormat) {
+            SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        } else {
+            SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.US)
+        }
+
+        inputFormat.timeZone = TimeZone.getDefault()
+        val date = inputFormat.parse(time)
+        return outputFormat.format(date)
+    }
+
+    private fun convertUtcToLocalTime(utcTime: String): String {
+        val utcFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        utcFormatter.timeZone = TimeZone.getTimeZone("UTC")
+
+        val localFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        localFormatter.timeZone = TimeZone.getDefault()
+
+        return try {
+            val utcDate = utcFormatter.parse(utcTime)
+            localFormatter.format(utcDate)
+        } catch (e: ParseException) {
+            utcTime // Повернути оригінальний час, якщо не вдалося конвертувати
+        }
     }
 }

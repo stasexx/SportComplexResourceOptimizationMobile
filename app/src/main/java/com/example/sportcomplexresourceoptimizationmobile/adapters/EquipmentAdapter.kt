@@ -1,5 +1,6 @@
 package com.example.sportcomplexresourceoptimizationmobile.adapters
 
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,14 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sportcomplexresourceoptimizationmobile.R
+import com.example.sportcomplexresourceoptimizationmobile.activities.CreateEquipmentActivity
 import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentItem
 
 class EquipmentAdapter(
     private var equipmentList: List<EquipmentItem>,
-    private val onItemClick: (String) -> Unit
+    private val onItemClick: (String) -> Unit,
+    private val onUpdateClick: (String, String) -> Unit,
+    private val onDeleteClick: (String) -> Unit
 ) : RecyclerView.Adapter<EquipmentAdapter.EquipmentViewHolder>() {
 
     // Оновлення списку обладнання
@@ -27,6 +31,8 @@ class EquipmentAdapter(
         val equipmentName: TextView = itemView.findViewById(R.id.textViewEquipmentName)
         val statusTextView: TextView = itemView.findViewById(R.id.textViewStatus)
         val createReservationButton: Button = itemView.findViewById(R.id.buttonCreateReservation)
+        val updateButton: Button = itemView.findViewById(R.id.buttonUpdate)
+        val deleteButton: Button = itemView.findViewById(R.id.buttonDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EquipmentViewHolder {
@@ -42,7 +48,8 @@ class EquipmentAdapter(
         holder.statusTextView.text = if (!equipment.status) "Free" else "Busy"
 
         // Встановлення фону в залежності від статусу
-        val statusDrawable = if (!equipment.status) R.drawable.bg_green_rounded else R.drawable.bg_red_rounded
+        val statusDrawable =
+            if (!equipment.status) R.drawable.bg_green_rounded else R.drawable.bg_red_rounded
         holder.statusTextView.setBackgroundResource(statusDrawable)
 
         // Зміна кольору тексту в залежності від статусу
@@ -53,6 +60,15 @@ class EquipmentAdapter(
 
         holder.createReservationButton.setOnClickListener {
             onItemClick.invoke(equipment.id)
+        }
+
+        // Обробка події для кнопки "Апдейт"
+        holder.updateButton.setOnClickListener {
+            onUpdateClick.invoke(equipment.id, equipment.name)
+        }
+
+        holder.deleteButton.setOnClickListener {
+            onDeleteClick.invoke(equipment.id)
         }
     }
 

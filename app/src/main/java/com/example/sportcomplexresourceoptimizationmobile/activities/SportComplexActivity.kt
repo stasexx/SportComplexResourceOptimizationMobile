@@ -45,6 +45,48 @@ class SportComplexActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         val navigationView: NavigationView = findViewById(R.id.navigationView)
         val searchEditText: EditText = findViewById(R.id.searchEditText)
+        val createSportComplexButton: Button = findViewById(R.id.createSportComplexButton)
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val userEmail = sharedPreferences.getString("email", null)
+        println("EMAIL" + userEmail)
+        if (userEmail != null) {
+            // Отримати дані про користувача з сервера
+            apiService.getUserByEmail(userEmail, object : UserCallback {
+                override fun onSuccess(user: UserModel) {
+                    // Перевірити, чи у користувача є роль "Admin"
+                    isAdmin = user.roles.any { it.name == "Admin" }
+                    println("ADMINKA " + isAdmin + "USER ROLE " + user.roles.any { it.name == "Admin" })
+                    invalidateOptionsMenu()
+                    if (isAdmin) {
+                        createSportComplexButton.visibility = View.VISIBLE
+                    } else {
+                        createSportComplexButton.visibility = View.GONE
+                    }
+
+                    if (isAdmin) {
+                        // Відображення кнопки "Create Sportcomplex"
+                        val menu = navigationView.menu
+
+                        invalidateOptionsMenu()
+
+                        val userId = user.id
+                        val userPhone = user.phone
+                        sportComplexAdapter = SportComplexAdapter(
+                            emptyList(),
+                            { sportComplexId -> openServiceActivity(sportComplexId) },
+                            { sportComplexId -> deleteSportComplex(sportComplexId) },
+                            { sportComplexId -> updateSportComplex(sportComplexId) },
+                            isAdmin
+                        )
+                        recyclerView.adapter = sportComplexAdapter
+                    }
+                }
+
+                override fun onError(error: String) {
+                    // Обробте помилку, якщо потрібно
+                }
+            })
+        }
 
         // Додайте обробник для введення тексту пошуку
         searchEditText.addTextChangedListener(object : TextWatcher {
@@ -62,34 +104,8 @@ class SportComplexActivity : AppCompatActivity() {
             }
         })
 
-        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val userEmail = sharedPreferences.getString("email", null)
-        if (userEmail != null) {
-            // Отримати дані про користувача з сервера
-            apiService.getUserByEmail(userEmail, object : UserCallback {
-                override fun onSuccess(user: UserModel) {
-                    // Перевірити, чи у користувача є роль "Admin"
-                    isAdmin = user.roles.any { it.name == "Admin" }
-                    invalidateOptionsMenu()
-                    if (isAdmin) {
-                        // Відображення кнопки "Create Sportcomplex"
-                        val menu = navigationView.menu
+        println("ADMIN STATUS" + isAdmin)
 
-                        invalidateOptionsMenu()
-
-                        val userId = user.id
-                        val userPhone = user.phone
-                        // інші дані користувача
-                    }
-                }
-
-                override fun onError(error: String) {
-                    // Обробте помилку, якщо потрібно
-                }
-            })
-        }
-
-        val createSportComplexButton: Button = findViewById(R.id.createSportComplexButton)
 
         createSportComplexButton.setOnClickListener {
             val intent = Intent(this, CreateSportComplexActivity::class.java)
@@ -99,9 +115,9 @@ class SportComplexActivity : AppCompatActivity() {
         sportComplexAdapter = SportComplexAdapter(
             emptyList(),
             { sportComplexId -> openServiceActivity(sportComplexId) },
-            { sportComplexId -> /* delete logic here */ },
-            { sportComplexId -> /* update logic here */ },
-            false
+            { sportComplexId -> deleteSportComplex(sportComplexId) },
+            { sportComplexId -> updateSportComplex(sportComplexId) },
+            isAdmin
         )
         recyclerView.adapter = sportComplexAdapter
 

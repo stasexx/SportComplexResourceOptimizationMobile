@@ -18,6 +18,21 @@
         android:layout_height="wrap_content"
         android:text="View Equipments" />
 
+    <Button
+        android:id="@+id/buttonDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"/>
+
+    <Button
+        android:id="@+id/buttonUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update"
+        android:layout_marginTop="8dp"/>
+
     <!-- Додайте інші тексти для відображення інших даних про сервіс -->
 
 </LinearLayout>

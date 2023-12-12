@@ -15,3 +15,13 @@ data class ServiceItem(
     val id: String,
     val name: String
 )
+
+data class ServiceRequest(
+    val name: String,
+    val sportComplexId: String
+)
+
+data class ServiceUpdateRequest(
+    val id: String,
+    val name: String
+)

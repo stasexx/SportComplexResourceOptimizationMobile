@@ -2,6 +2,7 @@ package com.example.sportcomplexresourceoptimizationmobile.activities
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,13 @@ class UsersReservationsActivity : AppCompatActivity() {
         reservationAdapter = UserReservationAdapter(emptyList())
         recyclerView.adapter = reservationAdapter
 
+        val toggleTimeFormatButton: Button = findViewById(R.id.toggleTimeFormatButton)
+        toggleTimeFormatButton.setOnClickListener {
+            reservationAdapter.toggleTimeFormat()
+        }
+
         fetchReservations()
+
     }
 
     private fun fetchReservations() {

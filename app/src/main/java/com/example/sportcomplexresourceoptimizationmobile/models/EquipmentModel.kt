@@ -15,3 +15,12 @@ data class EquipmentItem(
     val name: String,
     var status: Boolean
 )
+
+data class EquipmentRequest(
+    val name: String
+)
+
+data class EquipmentUpdateRequest(
+    val id: String,
+    val name: String
+)

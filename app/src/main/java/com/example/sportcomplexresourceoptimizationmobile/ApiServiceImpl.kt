@@ -1,8 +1,14 @@
 package com.example.sportcomplexresourceoptimizationmobile
 
+import android.util.Log
+import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentRequest
+import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentResponse
+import com.example.sportcomplexresourceoptimizationmobile.models.EquipmentUpdateRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.LoginModel
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationRequest
+import com.example.sportcomplexresourceoptimizationmobile.models.ServiceRequest
+import com.example.sportcomplexresourceoptimizationmobile.models.ServiceUpdateRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexItem
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexModel
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexRequest
@@ -223,6 +229,23 @@ class ApiServiceImpl {
         })
     }
 
+    fun deleteService(serviceId: String, callback: ApiCallback) {
+        val call = apiService.deleteService(serviceId)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    callback.onSuccess("Service deleted successfully.")
+                } else {
+                    callback.onError("Error occurred during service deletion.")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback.onError("Network error occurred during service deletion.")
+            }
+        })
+    }
+
     fun deleteSportComplex(sportComplexId: String, callback: ApiCallback) {
         val call = apiService.deleteSportComplex(sportComplexId)
         call.enqueue(object : Callback<Void> {
@@ -240,6 +263,102 @@ class ApiServiceImpl {
         })
     }
 
+    fun createService(userId: String, serviceRequest: ServiceRequest, callback: ApiCallback) {
+        val call = apiService.createService(userId, serviceRequest)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                println("RESPONSE " + response)
+                if (response.isSuccessful) {
+                    callback.onSuccess("Service created successfully.")
+                } else {
+                    callback.onError("Error occurred during service creation.")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback.onError("Network error occurred during service creation.")
+            }
+        })
+    }
+
+    fun updateService(updateRequest: ServiceUpdateRequest, callback: ApiCallback) {
+        val call = apiService.updateService(updateRequest)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                println("RESPONSE " + response)
+                if (response.isSuccessful) {
+                    callback.onSuccess("Service updated successfully.")
+                } else {
+                    callback.onError("Error occurred during service update.")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback.onError("Network error occurred during service update.")
+            }
+        })
+    }
+
+    fun createEquipment(serviceId: String?, userId: String?, equipmentName: String, callback: ApiCallback) {
+        val equipmentRequest = EquipmentRequest(name = equipmentName)
+
+        if (serviceId != null && userId != null) {
+            val call = apiService.createEquipment(serviceId, userId, equipmentRequest)
+            call.enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    println("RESPONSE " + response)
+                    if (response.isSuccessful) {
+                        callback.onSuccess("Equipment created successfully.")
+                    } else {
+                        val errorBody = response.errorBody()?.string()
+                        callback.onError("Error occurred during equipment creation. Code: ${response.code()}, Body: $errorBody")
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    callback.onError("Network error occurred during equipment creation. Error: $t")
+                }
+            })
+        } else {
+            callback.onError("Service ID or User ID is null")
+        }
+    }
+
+    fun updateEquipment(updateRequest: EquipmentUpdateRequest, callback: ApiCallback) {
+        val call = apiService.updateEquipment(updateRequest)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                Log.d("Response", "Response : $response")
+                if (response.isSuccessful) {
+                    callback.onSuccess("Equipment updated successfully.")
+                } else {
+                    callback.onError("Error occurred during equipment update.")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback.onError("Network error occurred during equipment update.")
+            }
+        })
+    }
+
+    fun deleteEquipment(equipmentId: String, callback: ApiCallback) {
+        val call = apiService.deleteEquipment(equipmentId)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    callback.onSuccess("Equipment deleted successfully.")
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    callback.onError("Error occurred during equipment deletion. Code: ${response.code()}, Body: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback.onError("Network error occurred during equipment deletion. Error: $t")
+            }
+        })
+    }
 
     fun getUserReservations(userId: String, callback: UserReservationCallback) {
         val call = apiService.getUserReservations(userId)

@@ -15,7 +15,7 @@ class SportComplexAdapter(
     private val onItemClick: (String) -> Unit,
     private val onDeleteClick: (String) -> Unit,
     private val onUpdateClick: (String) -> Unit,
-    private val isAdmin: Boolean
+    private var isAdmin: Boolean
 ) :
     RecyclerView.Adapter<SportComplexAdapter.ViewHolder>() {
 
@@ -43,7 +43,7 @@ class SportComplexAdapter(
         holder.cityTextView.text = sportComplex.city
         holder.addressTextView.text = sportComplex.address
         holder.descriptionTextView.text = sportComplex.description
-
+        println("ПЕРЕВІРКА АДМІНКИ" + isAdmin)
         if (isAdmin) {
             holder.buttonDelete.setOnClickListener {
                 onDeleteClick.invoke(sportComplex.id)
@@ -54,7 +54,6 @@ class SportComplexAdapter(
             }
 
         } else {
-            // Якщо користувач не є Admin, то приховати кнопки
             holder.buttonDelete.visibility = View.GONE
             holder.buttonUpdate.visibility = View.GONE
         }
