@@ -4,6 +4,12 @@
         android:id="@+id/menu_item1"
         android:title="My Reservations" />
     <item
+        android:id="@+id/menu_item3"
+        android:title="Sport Complexes" />
+    <item
         android:id="@+id/menu_item2"
         android:title="Administration" />
+    <item
+        android:id="@+id/menu_item4"
+        android:title="Log Out" />
 </menu>

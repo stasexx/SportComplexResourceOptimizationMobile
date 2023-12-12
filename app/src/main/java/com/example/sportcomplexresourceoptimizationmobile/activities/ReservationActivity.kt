@@ -1,17 +1,23 @@
 package com.example.sportcomplexresourceoptimizationmobile.activities
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.sportcomplexresourceoptimizationmobile.ApiServiceImpl
+import com.example.sportcomplexresourceoptimizationmobile.LoginActivity
 import com.example.sportcomplexresourceoptimizationmobile.R
 import com.example.sportcomplexresourceoptimizationmobile.models.ReservationRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.UserModel
 import com.example.sportcomplexresourceoptimizationmobile.services.ReservationCallback
 import com.example.sportcomplexresourceoptimizationmobile.services.UserCallback
+import com.google.android.material.navigation.NavigationView
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -130,7 +136,8 @@ class ReservationActivity : AppCompatActivity() {
                         apiService.createReservation(reservationRequest, object :
                             ApiServiceImpl.ApiCallback {
                             override fun onSuccess(result: String) {
-                                // Оновити інтерфейс або виконати інші дії при успішному створенні резервації
+                                val intent = Intent(this@ReservationActivity, UsersReservationsActivity::class.java)
+                                startActivity(intent)
                             }
 
                             override fun onError(error: String) {
@@ -146,7 +153,41 @@ class ReservationActivity : AppCompatActivity() {
             }
         }
 
+        val navigationView: NavigationView = findViewById(R.id.navigationView)
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_item1 -> {
+                    val intent = Intent(this, UsersReservationsActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_item3 -> {
+                    val intent = Intent(this, SportComplexActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_item4 -> {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_item2 -> {
+                    // Check if the user has the "Admin" role before launching the activity
+                        val intent = Intent(this, UserListActivity::class.java)
+                        startActivity(intent)
+                        true
+                }
+                else -> false
+            }
+        }
+
     }
+
+    fun openDrawer(view: View) {
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawerLayout)
+        drawerLayout.openDrawer(GravityCompat.START)
+    }
+
     private fun convertToNormalTime(timeString: String): String {
         val currentTime = Calendar.getInstance().time
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())

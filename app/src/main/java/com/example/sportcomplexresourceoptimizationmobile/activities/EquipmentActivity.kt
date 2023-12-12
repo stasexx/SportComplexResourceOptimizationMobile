@@ -69,7 +69,8 @@ class EquipmentActivity : AppCompatActivity() {
                             emptyList(),
                             ::openReservationActivity,
                             { equipmentId, equipmentName -> updateEquipment(equipmentId, equipmentName) },
-                            ::deleteEquipment
+                            ::deleteEquipment,
+                            isAdmin
                         )
 
                         recyclerView.adapter = equipmentAdapter
@@ -97,7 +98,8 @@ class EquipmentActivity : AppCompatActivity() {
             emptyList(),
             ::openReservationActivity,
             { equipmentId, equipmentName -> updateEquipment(equipmentId, equipmentName) },
-            ::deleteEquipment
+            ::deleteEquipment,
+            isAdmin
         )
 
         recyclerView.adapter = equipmentAdapter

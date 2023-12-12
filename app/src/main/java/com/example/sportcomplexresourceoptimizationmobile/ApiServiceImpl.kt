@@ -13,6 +13,7 @@ import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexIte
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexModel
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexUpdateRequest
+import com.example.sportcomplexresourceoptimizationmobile.models.UserListModel
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentCallback
 import com.example.sportcomplexresourceoptimizationmobile.services.EquipmentServiceImpl
 import com.example.sportcomplexresourceoptimizationmobile.services.ReservationCallback
@@ -131,7 +132,7 @@ class ApiServiceImpl {
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    println("Reservation created successfully.")
+                    callback.onSuccess(response.toString())
                 } else {
                     println("Error occurred during reservation creation.")
                 }
@@ -358,6 +359,72 @@ class ApiServiceImpl {
                 callback.onError("Network error occurred during equipment deletion. Error: $t")
             }
         })
+    }
+
+    fun getUsers(pageNumber: Int, pageSize: Int, callback: UsersCallback) {
+        val call = apiService.getUsers(pageNumber, pageSize)
+        call.enqueue(object : Callback<UserListModel> {
+            override fun onResponse(call: Call<UserListModel>, response: Response<UserListModel>) {
+                if (response.isSuccessful) {
+                    val userListModel = response.body()
+                    if (userListModel != null) {
+                        callback.onSuccess(userListModel)
+                    } else {
+                        callback.onError("Failed to fetch user list")
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    callback.onError("Error occurred during user list retrieval. Code: ${response.code()}, Body: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<UserListModel>, t: Throwable) {
+                callback.onError("Network error occurred during user list retrieval. Error: $t")
+            }
+        })
+    }
+
+    fun banUser(userId: String, callback: ApiCallback) {
+        val call = apiService.deleteUserBan(userId)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    callback.onSuccess("User banned successfully.")
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    callback.onError("Error occurred during user ban. Code: ${response.code()}, Body: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback.onError("Network error occurred during user ban. Error: $t")
+            }
+        })
+    }
+
+    fun unBanUser(userId: String, callback: ApiCallback) {
+        val call = apiService.unBanUser(userId)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                println(response)
+                if (response.isSuccessful) {
+                    callback.onSuccess("User unbanned successfully.")
+                    println("User unbanned successfully.")
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    println("Error occurred during user ban. Code: ${response.code()}, Body: $errorBody")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback.onError("Network error occurred during user ban. Error: $t")
+            }
+        })
+    }
+
+    interface UsersCallback {
+        fun onSuccess(result: UserListModel)
+        fun onError(error: String)
     }
 
     fun getUserReservations(userId: String, callback: UserReservationCallback) {

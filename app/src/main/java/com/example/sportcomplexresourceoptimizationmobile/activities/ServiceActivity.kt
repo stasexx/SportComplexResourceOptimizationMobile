@@ -11,12 +11,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sportcomplexresourceoptimizationmobile.ApiServiceImpl
+import com.example.sportcomplexresourceoptimizationmobile.LoginActivity
 import com.example.sportcomplexresourceoptimizationmobile.R
 import com.example.sportcomplexresourceoptimizationmobile.adapters.ServiceAdapter
 import com.example.sportcomplexresourceoptimizationmobile.models.ServiceItem
 import com.example.sportcomplexresourceoptimizationmobile.models.UserModel
 import com.example.sportcomplexresourceoptimizationmobile.services.ServiceCallback
 import com.example.sportcomplexresourceoptimizationmobile.services.UserCallback
+import com.google.android.material.navigation.NavigationView
 
 class ServiceActivity : AppCompatActivity() {
 
@@ -58,6 +60,8 @@ class ServiceActivity : AppCompatActivity() {
                     } else {
                         createServiceButton.visibility = View.GONE
                     }
+
+
                     if (isAdmin) {
                         // Відображення кнопки "Create Sportcomplex"
 
@@ -107,6 +111,39 @@ class ServiceActivity : AppCompatActivity() {
         recyclerView.adapter = serviceAdapter
 
         fetchServices()
+
+        val navigationView: NavigationView = findViewById(R.id.navigationView)
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_item1 -> {
+                    val intent = Intent(this, UsersReservationsActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_item3 -> {
+                    val intent = Intent(this, SportComplexActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_item4 -> {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_item2 -> {
+                    // Check if the user has the "Admin" role before launching the activity
+                    if (isAdmin) {
+                        val intent = Intent(this, UserListActivity::class.java)
+                        startActivity(intent)
+                        true
+                    } else {
+                        // You can show a toast or handle it in any way you prefer
+                        false
+                    }
+                }
+                else -> false
+            }
+        }
     }
 
     private fun fetchServices() {

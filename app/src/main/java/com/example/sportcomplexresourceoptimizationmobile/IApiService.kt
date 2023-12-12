@@ -14,6 +14,7 @@ import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexIte
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexModel
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexRequest
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexUpdateRequest
+import com.example.sportcomplexresourceoptimizationmobile.models.UserListModel
 import com.example.sportcomplexresourceoptimizationmobile.models.UserModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -112,4 +113,16 @@ interface IApiService {
 
     @DELETE("equipments/delete/{equipmentId}")
     fun deleteEquipment(@Path("equipmentId") equipmentId: String): Call<Void>
+
+    @DELETE("users/ban/{id}")
+    fun deleteUserBan(@Path("id") userId: String): Call<Void>
+
+    @POST("users/unban/{id}")
+    fun unBanUser(@Path("id") userId: String): Call<Void>
+
+    @GET("users")
+    fun getUsers(
+        @Query("pageNumber") pageNumber: Int,
+        @Query("pageSize") pageSize: Int
+    ): Call<UserListModel>
 }

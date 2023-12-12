@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sportcomplexresourceoptimizationmobile.ApiServiceImpl
+import com.example.sportcomplexresourceoptimizationmobile.LoginActivity
 import com.example.sportcomplexresourceoptimizationmobile.R
 import com.example.sportcomplexresourceoptimizationmobile.adapters.SportComplexAdapter
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexItem
@@ -54,7 +55,7 @@ class SportComplexActivity : AppCompatActivity() {
             apiService.getUserByEmail(userEmail, object : UserCallback {
                 override fun onSuccess(user: UserModel) {
                     // Перевірити, чи у користувача є роль "Admin"
-                    isAdmin = user.roles.any { it.name == "Admin" }
+                    isAdmin = user.roles.any { it.name == "Admin" || it.name == "Owner"}
                     println("ADMINKA " + isAdmin + "USER ROLE " + user.roles.any { it.name == "Admin" })
                     invalidateOptionsMenu()
                     if (isAdmin) {
@@ -62,6 +63,7 @@ class SportComplexActivity : AppCompatActivity() {
                     } else {
                         createSportComplexButton.visibility = View.GONE
                     }
+
 
                     if (isAdmin) {
                         // Відображення кнопки "Create Sportcomplex"
@@ -131,8 +133,26 @@ class SportComplexActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-                R.id.menu_item2 -> {
+                R.id.menu_item3 -> {
+                    val intent = Intent(this, SportComplexActivity::class.java)
+                    startActivity(intent)
                     true
+                }
+                R.id.menu_item4 -> {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_item2 -> {
+                    // Check if the user has the "Admin" role before launching the activity
+                    if (isAdmin) {
+                        val intent = Intent(this, UserListActivity::class.java)
+                        startActivity(intent)
+                        true
+                    } else {
+                        // You can show a toast or handle it in any way you prefer
+                        false
+                    }
                 }
                 else -> false
             }

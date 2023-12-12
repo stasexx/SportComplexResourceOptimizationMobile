@@ -18,7 +18,8 @@ class EquipmentAdapter(
     private var equipmentList: List<EquipmentItem>,
     private val onItemClick: (String) -> Unit,
     private val onUpdateClick: (String, String) -> Unit,
-    private val onDeleteClick: (String) -> Unit
+    private val onDeleteClick: (String) -> Unit,
+    private val isAdmin: Boolean
 ) : RecyclerView.Adapter<EquipmentAdapter.EquipmentViewHolder>() {
 
     // Оновлення списку обладнання
@@ -56,20 +57,26 @@ class EquipmentAdapter(
         val textColor = if (!equipment.status) R.color.black else R.color.white
         holder.statusTextView.setTextColor(holder.itemView.resources.getColor(textColor))
 
-        // Додайте інші дані до віджетів, якщо потрібно
+        if (isAdmin) {
+            holder.deleteButton.visibility = View.VISIBLE
+            holder.updateButton.visibility = View.VISIBLE
+
+            holder.deleteButton.setOnClickListener {
+                onDeleteClick.invoke(equipment.id)
+            }
+
+            holder.updateButton.setOnClickListener {
+                onUpdateClick.invoke(equipment.id, equipment.name)
+            }
+        } else {
+            holder.deleteButton.visibility = View.GONE
+            holder.updateButton.visibility = View.GONE
+        }
 
         holder.createReservationButton.setOnClickListener {
             onItemClick.invoke(equipment.id)
         }
 
-        // Обробка події для кнопки "Апдейт"
-        holder.updateButton.setOnClickListener {
-            onUpdateClick.invoke(equipment.id, equipment.name)
-        }
-
-        holder.deleteButton.setOnClickListener {
-            onDeleteClick.invoke(equipment.id)
-        }
     }
 
     override fun getItemCount(): Int {
