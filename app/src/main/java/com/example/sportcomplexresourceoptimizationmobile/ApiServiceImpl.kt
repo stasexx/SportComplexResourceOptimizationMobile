@@ -150,7 +150,6 @@ class ApiServiceImpl {
             override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                 println(call)
                 if (response.isSuccessful) {
-                    println("УСПІШНО")
                     val status = response.body() ?: false
                     println(status)
                     callback.onSuccess(status.toString())

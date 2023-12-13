@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/menuButton"
-        android:hint="Search Sport Complex"
+        android:hint="Search user by email"
         android:layout_margin="16dp"/>
 
 

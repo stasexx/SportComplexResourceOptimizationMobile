@@ -3,6 +3,7 @@ package com.example.sportcomplexresourceoptimizationmobile.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -96,7 +97,7 @@ class ReservationActivity : AppCompatActivity() {
                 }
 
                 override fun onError(error: String) {
-                    // Обробка помилки, якщо потрібно
+                    Log.d("Get Slots", "Error : $error")
                 }
             })
         }
@@ -141,13 +142,13 @@ class ReservationActivity : AppCompatActivity() {
                             }
 
                             override fun onError(error: String) {
-                                // Обробити помилку при створенні резервації
+                                Log.d("UserEmail checker", "Error : $error")
                             }
                         })
                     }
 
                     override fun onError(errorMessage: String) {
-                        // Обробити помилку при отриманні користувача
+                        Log.d("UserEmail checker", "Error : $errorMessage")
                     }
                 })
             }

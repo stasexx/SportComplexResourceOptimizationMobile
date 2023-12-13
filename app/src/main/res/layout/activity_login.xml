@@ -8,11 +8,22 @@
     android:paddingBottom="16dp"
     tools:context="com.example.sportcomplexresourceoptimizationmobile.LoginActivity">
 
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OptiGym"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_margin="16dp" />
+
+
     <EditText
         android:id="@+id/editTextUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:layout_below="@id/header"
         android:hint="Username" />
 
     <EditText

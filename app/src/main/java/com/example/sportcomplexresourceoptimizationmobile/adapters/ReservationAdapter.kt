@@ -85,7 +85,7 @@ class UserReservationAdapter(private var reservationList: List<ReservationItem>)
             val utcDate = utcFormatter.parse(utcTime)
             localFormatter.format(utcDate)
         } catch (e: ParseException) {
-            utcTime // Повернути оригінальний час, якщо не вдалося конвертувати
+            utcTime // Return original time
         }
     }
 }

@@ -1,9 +1,11 @@
 package com.example.sportcomplexresourceoptimizationmobile
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.example.sportcomplexresourceoptimizationmobile.activities.EquipmentActivity
 import com.example.sportcomplexresourceoptimizationmobile.models.RegisterModel
 import com.example.sportcomplexresourceoptimizationmobile.models.SportComplexItem
 
@@ -41,6 +43,8 @@ class RegistryActivity : AppCompatActivity() {
             apiService.registerUser(registerModel, object : ApiServiceImpl.ApiCallback {
                 override fun onSuccess(result: String) {
                     println("Registration successful")
+                    val intent = Intent(this@RegistryActivity, LoginActivity::class.java)
+                    startActivity(intent)
                 }
 
                 override fun onError(error: String) {
